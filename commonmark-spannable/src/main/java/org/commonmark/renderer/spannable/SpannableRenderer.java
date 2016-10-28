@@ -1,7 +1,6 @@
 package org.commonmark.renderer.spannable;
 
 import org.commonmark.Extension;
-import org.commonmark.R;
 import org.commonmark.internal.renderer.NodeRendererMap;
 import org.commonmark.node.Node;
 import org.commonmark.renderer.NodeRenderer;
