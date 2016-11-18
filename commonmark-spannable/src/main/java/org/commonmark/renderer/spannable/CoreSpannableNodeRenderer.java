@@ -235,7 +235,16 @@ public class CoreSpannableNodeRenderer extends AbstractVisitor implements NodeRe
     @Override
     public void visit(Text text) {
         mSpannableWriter.write(text.getLiteral());
-        visitChildren(text);
+    }
+
+    @Override
+    protected void visitChildren(Node parent) {
+        Node node = parent.getFirstChild();
+        while (node != null) {
+            Node next = node.getNext();
+            mRendererContext.render(node);
+            node = next;
+        }
     }
 
     private void addParagraphIfNeeded(Node node) {
