@@ -10,6 +10,7 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
+        maven { url 'https://maven.google.com' } //TODO: Change to google() when upgrading gradle to 4.0.
     }
 }
 
