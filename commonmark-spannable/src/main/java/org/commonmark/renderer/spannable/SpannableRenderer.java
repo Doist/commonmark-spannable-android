@@ -6,6 +6,7 @@ import org.commonmark.node.Node;
 import org.commonmark.renderer.NodeRenderer;
 import org.commonmark.renderer.Renderer;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
 import android.support.annotation.ColorInt;
@@ -87,6 +88,11 @@ public class SpannableRenderer implements Renderer {
                 return new CoreSpannableNodeRenderer(context);
             }
         });
+    }
+
+    @Deprecated
+    public static Builder builder(Context context) {
+        return builder(context.getResources());
     }
 
     /**
