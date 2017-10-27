@@ -38,7 +38,7 @@ public class SpannableRenderer implements Renderer {
     private final int mQuoteStripeColor;
 
     private SpannableRenderer(Builder builder) {
-        Resources resources = builder.mContext.getResources();
+        Resources resources = builder.mResources;
 
         mKeepOrder = builder.mKeepOrder;
 
@@ -90,13 +90,18 @@ public class SpannableRenderer implements Renderer {
         });
     }
 
+    @Deprecated
+    public static Builder builder(Context context) {
+        return builder(context.getResources());
+    }
+
     /**
      * Create a new builder for configuring an {@link SpannableRenderer}.
      *
      * @return a builder
      */
-    public static Builder builder(Context context) {
-        return new Builder(context);
+    public static Builder builder(Resources resources) {
+        return new Builder(resources);
     }
 
     @Override
@@ -149,7 +154,7 @@ public class SpannableRenderer implements Renderer {
     public static final class Builder {
         private final List<SpannableNodeRendererFactory> mNodeRendererFactories = new ArrayList<>();
 
-        private final Context mContext;
+        private final Resources mResources;
 
         private boolean mKeepOrder = true;
 
@@ -178,8 +183,8 @@ public class SpannableRenderer implements Renderer {
         private Integer mQuoteStripeColor;
         private Integer mQuoteStripeColorResId;
 
-        private Builder(Context context) {
-            mContext = context.getApplicationContext();
+        private Builder(Resources resources) {
+            mResources = resources;
         }
 
         /**
