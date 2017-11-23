@@ -34,9 +34,11 @@ import org.commonmark.renderer.spannable.text.style.QuoteSpan;
 import org.commonmark.renderer.spannable.text.style.UnorderedListItemSpan;
 
 import android.graphics.Typeface;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.text.style.StyleSpan;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -116,6 +118,7 @@ public class CoreSpannableNodeRenderer extends AbstractVisitor implements NodeRe
 
     @Override
     public void visit(Emphasis emphasis) {
+        mSpannableWriter.addSpans(getInheritedSpans(emphasis));
         mSpannableWriter.addSpan(new StyleSpan(Typeface.ITALIC));
         visitChildren(emphasis);
     }
@@ -173,6 +176,7 @@ public class CoreSpannableNodeRenderer extends AbstractVisitor implements NodeRe
 
     @Override
     public void visit(Link link) {
+        mSpannableWriter.addSpans(getInheritedSpans(link));
         mSpannableWriter.addSpan(new LinkSpan(link.getDestination()));
         visitChildren(link);
     }
@@ -228,12 +232,14 @@ public class CoreSpannableNodeRenderer extends AbstractVisitor implements NodeRe
 
     @Override
     public void visit(StrongEmphasis strongEmphasis) {
+        mSpannableWriter.addSpans(getInheritedSpans(strongEmphasis));
         mSpannableWriter.addSpan(new StyleSpan(Typeface.BOLD));
         visitChildren(strongEmphasis);
     }
 
     @Override
     public void visit(Text text) {
+        mSpannableWriter.addSpans(getInheritedSpans(text));
         mSpannableWriter.write(text.getLiteral());
     }
 
@@ -245,6 +251,28 @@ public class CoreSpannableNodeRenderer extends AbstractVisitor implements NodeRe
             mRendererContext.render(node);
             node = next;
         }
+    }
+
+    private ArrayList<Object> getInheritedSpans(@NonNull Node node) {
+        Node parent = node.getParent();
+        ArrayList<Object> spans = new ArrayList<>();
+        while (parent != null && getInheritedSpanFor(parent) != null) {
+            spans.add(getInheritedSpanFor(parent));
+            parent = parent.getParent();
+        }
+        return spans;
+    }
+
+    private Object getInheritedSpanFor(Node node) {
+        if (node instanceof StrongEmphasis) {
+            return new StyleSpan(Typeface.BOLD);
+        } else if (node instanceof Emphasis || node instanceof BlockQuote) {
+            return new StyleSpan(Typeface.ITALIC);
+        } else if (node instanceof Link) {
+            return new LinkSpan(((Link) node).getDestination());
+        }
+
+        return null;
     }
 
     private void addParagraphIfNeeded(Node node) {

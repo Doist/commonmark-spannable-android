@@ -51,6 +51,10 @@ public class SpannableWriter {
         mSpans.add(span);
     }
 
+    public void addSpans(ArrayList<Object> spans) {
+        mSpans.addAll(spans);
+    }
+
     public void write(String text) {
         SpannableStringBuilder ssb = new SpannableStringBuilder(text);
 
