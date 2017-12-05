@@ -1,16 +1,22 @@
 package org.commonmark.renderer.spannable;
 
+import org.commonmark.renderer.spannable.internal.SpannableProviderMap;
 import org.commonmark.renderer.spannable.text.style.CountedSpan;
 
+import android.support.annotation.Nullable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
+@SuppressWarnings("WeakerAccess")
 public class SpannableWriter {
-    private final ArrayList<Object> mSpans = new ArrayList<>();
+    private final Map<Class<?>, Object> mSpanTypes = new HashMap<>();
 
     private final SpannableStringBuilder mBuffer;
+
+    private SpannableProviderMap mProviderMap;
 
     private int mCount;
 
@@ -18,6 +24,10 @@ public class SpannableWriter {
 
     public SpannableWriter(SpannableStringBuilder out) {
         mBuffer = out;
+    }
+
+    public void setProviderMap(SpannableProviderMap providerMap) {
+        mProviderMap = providerMap;
     }
 
     public void paragraph(Object span) {
@@ -47,22 +57,31 @@ public class SpannableWriter {
         mCount = startCount;
     }
 
-    public void addSpan(Object span) {
-        mSpans.add(span);
+    public void start(Class<?> spanClass) {
+        start(spanClass, null);
+    }
+
+    public void start(Class<?> spanClass, @Nullable Object parameter) {
+        mSpanTypes.put(spanClass, parameter);
+    }
+
+    public void end(Class<?> spanClass) {
+        mSpanTypes.remove(spanClass);
     }
 
     public void write(String text) {
         SpannableStringBuilder ssb = new SpannableStringBuilder(text);
 
         int length = text.length();
-        for (Object span : mSpans) {
+        for (Map.Entry<Class<?>, Object> entry : mSpanTypes.entrySet()) {
+            Class<?> spanClass = entry.getKey();
+            Object span = mProviderMap.get(spanClass).create(spanClass, entry.getValue());
             if (span instanceof CountedSpan) {
                 ((CountedSpan) span).setCount(mCount);
                 mCount++;
             }
             ssb.setSpan(span, 0, length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
-        mSpans.clear();
 
         if (length != 0) {
             mLastChar = text.charAt(length - 1);

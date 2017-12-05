@@ -5,6 +5,7 @@ import org.commonmark.internal.renderer.NodeRendererMap;
 import org.commonmark.node.Node;
 import org.commonmark.renderer.NodeRenderer;
 import org.commonmark.renderer.Renderer;
+import org.commonmark.renderer.spannable.internal.SpannableProviderMap;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -22,6 +23,7 @@ import java.util.List;
  */
 public class SpannableRenderer implements Renderer {
     private final List<SpannableNodeRendererFactory> mNodeRendererFactories;
+    private final List<SpannableProviderFactory> mProviderFactories;
 
     private final boolean mKeepOrder;
     private final int mListItemMarkerLeftMargin;
@@ -79,13 +81,17 @@ public class SpannableRenderer implements Renderer {
         mQuoteStripeColor = getColor(resources, builder.mQuoteStripeColor, builder.mQuoteStripeColorResId,
                                      R.color.commonmark_quote_stripe_color);
 
-        mNodeRendererFactories = new ArrayList<>(builder.mNodeRendererFactories.size() + 1);
-        mNodeRendererFactories.addAll(builder.mNodeRendererFactories);
-        // Add as last. This means clients can override the rendering of core nodes if they want.
-        mNodeRendererFactories.add(new SpannableNodeRendererFactory() {
+        mNodeRendererFactories = createFactoryList(builder.mNodeRendererFactories, new SpannableNodeRendererFactory() {
             @Override
             public NodeRenderer create(SpannableNodeRendererContext context) {
                 return new CoreSpannableNodeRenderer(context);
+            }
+        });
+
+        mProviderFactories = createFactoryList(builder.mProviderFactories, new SpannableProviderFactory() {
+            @Override
+            public SpannableProvider create(SpannableProviderContext context) {
+                return new CoreSpannableProvider(context);
             }
         });
     }
@@ -100,6 +106,7 @@ public class SpannableRenderer implements Renderer {
      *
      * @return a builder
      */
+    @SuppressWarnings("WeakerAccess")
     public static Builder builder(Resources resources) {
         return new Builder(resources);
     }
@@ -148,11 +155,20 @@ public class SpannableRenderer implements Renderer {
         }
     }
 
+    private <T> List<T> createFactoryList(List<T> custom, T coreFactory) {
+        List<T> result = new ArrayList<>(custom.size() + 1);
+        result.addAll(custom);
+        // Add as last. This means clients can override the creating of core span if they want.
+        result.add(coreFactory);
+        return result;
+    }
+
     /**
      * Builder for configuring an {@link SpannableRenderer}.
      */
     public static final class Builder {
         private final List<SpannableNodeRendererFactory> mNodeRendererFactories = new ArrayList<>();
+        private final List<SpannableProviderFactory> mProviderFactories = new ArrayList<>();
 
         private final Resources mResources;
 
@@ -486,6 +502,20 @@ public class SpannableRenderer implements Renderer {
         }
 
         /**
+         * Add a factory for instantiating spannable provider. This allows to override the span or provide custom span.
+         * <p>
+         * If multiple spannable provider for the same span are created, the one from the factory that was added first
+         * "wins".
+         *
+         * @param providerFactory the factory for creating a spannable provider
+         * @return {@code this}
+         */
+        public Builder providerFactory(SpannableProviderFactory providerFactory) {
+            mProviderFactories.add(providerFactory);
+            return this;
+        }
+
+        /**
          * @param extensions extensions to use on this spannable renderer
          * @return {@code this}
          */
@@ -507,12 +537,20 @@ public class SpannableRenderer implements Renderer {
         void extend(SpannableRenderer.Builder rendererBuilder);
     }
 
-    private class RendererContext implements SpannableNodeRendererContext {
+    private class RendererContext implements SpannableNodeRendererContext, SpannableProviderContext {
         private final SpannableWriter mSpannableWriter;
         private final NodeRendererMap mNodeRendererMap = new NodeRendererMap();
 
         private RendererContext(SpannableWriter spannableWriter) {
-            this.mSpannableWriter = spannableWriter;
+            SpannableProviderMap providerMap = new SpannableProviderMap();
+            // The first spannable provider for a span "wins".
+            for (int i = mProviderFactories.size() - 1; i >= 0; i--) {
+                SpannableProviderFactory providerFactory = mProviderFactories.get(i);
+                SpannableProvider provider = providerFactory.create(this);
+                providerMap.add(provider);
+            }
+            spannableWriter.setProviderMap(providerMap);
+            mSpannableWriter = spannableWriter;
 
             // The first node renderer for a node type "wins".
             for (int i = mNodeRendererFactories.size() - 1; i >= 0; i--) {

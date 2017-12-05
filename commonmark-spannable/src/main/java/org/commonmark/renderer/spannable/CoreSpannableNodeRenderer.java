@@ -24,18 +24,18 @@ import org.commonmark.node.StrongEmphasis;
 import org.commonmark.node.Text;
 import org.commonmark.node.ThematicBreak;
 import org.commonmark.renderer.NodeRenderer;
+import org.commonmark.renderer.spannable.text.style.BoldSpan;
 import org.commonmark.renderer.spannable.text.style.CodeBlockSpan;
 import org.commonmark.renderer.spannable.text.style.HeaderSpan;
 import org.commonmark.renderer.spannable.text.style.InlineCodeSpan;
+import org.commonmark.renderer.spannable.text.style.ItalicSpan;
 import org.commonmark.renderer.spannable.text.style.LineSeparatorSpan;
 import org.commonmark.renderer.spannable.text.style.LinkSpan;
 import org.commonmark.renderer.spannable.text.style.OrderedListItemSpan;
 import org.commonmark.renderer.spannable.text.style.QuoteSpan;
 import org.commonmark.renderer.spannable.text.style.UnorderedListItemSpan;
 
-import android.graphics.Typeface;
 import android.text.TextUtils;
-import android.text.style.StyleSpan;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -89,10 +89,10 @@ public class CoreSpannableNodeRenderer extends AbstractVisitor implements NodeRe
 
     @Override
     public void visit(BlockQuote blockQuote) {
-        mSpannableWriter.addSpan(new QuoteSpan(mRendererContext.getQuoteStripeColor(),
-                                               mRendererContext.getQuoteStripeWidth(),
-                                               mRendererContext.getQuotePadding()));
+        mSpannableWriter.start(QuoteSpan.class);
         visitChildren(blockQuote);
+        mSpannableWriter.end(QuoteSpan.class);
+
         addParagraphIfNeeded(blockQuote);
     }
 
@@ -109,34 +109,34 @@ public class CoreSpannableNodeRenderer extends AbstractVisitor implements NodeRe
 
     @Override
     public void visit(Code code) {
-        mSpannableWriter.addSpan(new InlineCodeSpan(mRendererContext.getCodeBlockColor(),
-                                                    mRendererContext.getCodeTextSize()));
+        mSpannableWriter.start(InlineCodeSpan.class);
         mSpannableWriter.write(code.getLiteral());
+        mSpannableWriter.end(InlineCodeSpan.class);
     }
 
     @Override
     public void visit(Emphasis emphasis) {
-        mSpannableWriter.addSpan(new StyleSpan(Typeface.ITALIC));
+        mSpannableWriter.start(ItalicSpan.class);
         visitChildren(emphasis);
+        mSpannableWriter.end(ItalicSpan.class);
     }
 
     @Override
     public void visit(FencedCodeBlock fencedCodeBlock) {
         if (!TextUtils.isEmpty(fencedCodeBlock.getInfo())) {
-            mSpannableWriter.addSpan(new StyleSpan(Typeface.ITALIC));
-            mSpannableWriter.addSpan(new StyleSpan(Typeface.BOLD));
+            mSpannableWriter.start(ItalicSpan.class);
+            mSpannableWriter.start(BoldSpan.class);
             mSpannableWriter.write(fencedCodeBlock.getInfo());
+            mSpannableWriter.end(BoldSpan.class);
+            mSpannableWriter.end(ItalicSpan.class);
             mSpannableWriter.line();
         }
-        mSpannableWriter.addSpan(createCodeBlockSpan());
-        mSpannableWriter.write(fencedCodeBlock.getLiteral());
-        addParagraphIfNeeded(fencedCodeBlock);
-    }
 
-    private CodeBlockSpan createCodeBlockSpan() {
-        return new CodeBlockSpan(mRendererContext.getCodeBlockColor(),
-                                 mRendererContext.getCodeTextSize(),
-                                 mRendererContext.getCodeBlockPadding());
+        mSpannableWriter.start(CodeBlockSpan.class);
+        mSpannableWriter.write(fencedCodeBlock.getLiteral());
+        mSpannableWriter.end(CodeBlockSpan.class);
+
+        addParagraphIfNeeded(fencedCodeBlock);
     }
 
     @Override
@@ -147,8 +147,10 @@ public class CoreSpannableNodeRenderer extends AbstractVisitor implements NodeRe
 
     @Override
     public void visit(Heading header) {
-        mSpannableWriter.addSpan(new HeaderSpan(mRendererContext.getHeaderTextSize()));
+        mSpannableWriter.start(HeaderSpan.class);
         visitChildren(header);
+        mSpannableWriter.end(HeaderSpan.class);
+
         addParagraphIfNeeded(header);
     }
 
@@ -166,31 +168,33 @@ public class CoreSpannableNodeRenderer extends AbstractVisitor implements NodeRe
 
     @Override
     public void visit(IndentedCodeBlock indentedCodeBlock) {
-        mSpannableWriter.addSpan(createCodeBlockSpan());
+        mSpannableWriter.start(CodeBlockSpan.class);
         mSpannableWriter.write(indentedCodeBlock.getLiteral());
+        mSpannableWriter.end(CodeBlockSpan.class);
+
         addParagraphIfNeeded(indentedCodeBlock);
     }
 
     @Override
     public void visit(Link link) {
-        mSpannableWriter.addSpan(new LinkSpan(link.getDestination()));
+        mSpannableWriter.start(LinkSpan.class, link.getDestination());
         visitChildren(link);
+        mSpannableWriter.end(LinkSpan.class);
     }
 
     @Override
     public void visit(ListItem listItem) {
+        Class<?> span = null;
         if (mOrderedList) {
-            mSpannableWriter.addSpan(new OrderedListItemSpan(mRendererContext.getListItemLeading(),
-                                                             mRendererContext.getListItemExtraHeight(),
-                                                             mRendererContext.getListItemMarkerLeftMargin()));
+            span = OrderedListItemSpan.class;
         } else if (mUnorderedList) {
-            mSpannableWriter.addSpan(new UnorderedListItemSpan(mRendererContext.getListItemLeading(),
-                                                               mRendererContext.getListItemExtraHeight(),
-                                                               mRendererContext.getListItemMarkerLeftMargin(),
-                                                               mRendererContext.getListItemBulletRadius()));
+            span = UnorderedListItemSpan.class;
         }
 
+        mSpannableWriter.start(span);
         visitChildren(listItem);
+        mSpannableWriter.end(span);
+
         if (listItem.getNext() != null) {
             mSpannableWriter.line();
         }
@@ -228,8 +232,9 @@ public class CoreSpannableNodeRenderer extends AbstractVisitor implements NodeRe
 
     @Override
     public void visit(StrongEmphasis strongEmphasis) {
-        mSpannableWriter.addSpan(new StyleSpan(Typeface.BOLD));
+        mSpannableWriter.start(BoldSpan.class);
         visitChildren(strongEmphasis);
+        mSpannableWriter.end(BoldSpan.class);
     }
 
     @Override
