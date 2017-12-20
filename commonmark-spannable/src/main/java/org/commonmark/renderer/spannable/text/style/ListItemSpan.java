@@ -4,18 +4,19 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.text.Layout;
 import android.text.Spanned;
-import android.text.style.LeadingMarginSpan;
 import android.text.style.LineHeightSpan;
 
-public abstract class ListItemSpan implements LeadingMarginSpan, LineHeightSpan {
+public abstract class ListItemSpan implements LeadingParagraphSpan, LineHeightSpan {
     private final int mLineExtraSpace;
     private final int mLineLeading;
     private final int mMarkerLeftMargin;
 
+    private int mParentLeadingMargin;
+
     private int mTextDefaultTop;
     private int mTextDefaultAscent;
 
-    public ListItemSpan(int leading, int extraHeight, int leftMargin) {
+    ListItemSpan(int leading, int extraHeight, int leftMargin) {
         mLineLeading = leading;
         mLineExtraSpace = extraHeight;
         mMarkerLeftMargin = leftMargin;
@@ -23,6 +24,11 @@ public abstract class ListItemSpan implements LeadingMarginSpan, LineHeightSpan 
 
     protected abstract void drawMarker(Canvas c, Paint p, int x, int baseline, int top, int bottom, int lineLeading,
                                        int markerLeftMargin, int lineExtraSpace);
+
+    @Override
+    public void increaseLeadingMargin(int leadingMargin) {
+        mParentLeadingMargin += leadingMargin;
+    }
 
     @Override
     public int getLeadingMargin(boolean first) {
@@ -36,7 +42,7 @@ public abstract class ListItemSpan implements LeadingMarginSpan, LineHeightSpan 
             return;
         }
 
-        drawMarker(c, p, x, baseline, top, bottom, mLineLeading, mMarkerLeftMargin, mLineExtraSpace);
+        drawMarker(c, p, mParentLeadingMargin, baseline, top, bottom, mLineLeading, mMarkerLeftMargin, mLineExtraSpace);
     }
 
     @Override

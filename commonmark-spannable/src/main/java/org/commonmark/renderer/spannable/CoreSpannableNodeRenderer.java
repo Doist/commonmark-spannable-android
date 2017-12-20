@@ -24,6 +24,9 @@ import org.commonmark.node.StrongEmphasis;
 import org.commonmark.node.Text;
 import org.commonmark.node.ThematicBreak;
 import org.commonmark.renderer.NodeRenderer;
+import org.commonmark.renderer.spannable.internal.BulletListHolder;
+import org.commonmark.renderer.spannable.internal.ListHolder;
+import org.commonmark.renderer.spannable.internal.OrderedListHolder;
 import org.commonmark.renderer.spannable.text.style.BoldSpan;
 import org.commonmark.renderer.spannable.text.style.CodeBlockSpan;
 import org.commonmark.renderer.spannable.text.style.HeaderSpan;
@@ -31,9 +34,7 @@ import org.commonmark.renderer.spannable.text.style.InlineCodeSpan;
 import org.commonmark.renderer.spannable.text.style.ItalicSpan;
 import org.commonmark.renderer.spannable.text.style.LineSeparatorSpan;
 import org.commonmark.renderer.spannable.text.style.LinkSpan;
-import org.commonmark.renderer.spannable.text.style.OrderedListItemSpan;
 import org.commonmark.renderer.spannable.text.style.QuoteSpan;
-import org.commonmark.renderer.spannable.text.style.UnorderedListItemSpan;
 
 import android.text.TextUtils;
 
@@ -48,10 +49,9 @@ public class CoreSpannableNodeRenderer extends AbstractVisitor implements NodeRe
     private final SpannableNodeRendererContext mRendererContext;
     private final SpannableWriter mSpannableWriter;
 
-    private boolean mOrderedList;
-    private boolean mUnorderedList;
+    private ListHolder listHolder;
 
-    public CoreSpannableNodeRenderer(SpannableNodeRendererContext rendererContext) {
+    CoreSpannableNodeRenderer(SpannableNodeRendererContext rendererContext) {
         mRendererContext = rendererContext;
         mSpannableWriter = mRendererContext.getWriter();
     }
@@ -98,13 +98,17 @@ public class CoreSpannableNodeRenderer extends AbstractVisitor implements NodeRe
 
     @Override
     public void visit(BulletList bulletList) {
-        mUnorderedList = true;
-        if (mOrderedList) {
-            mOrderedList = false;
+        if (listHolder != null) {
+            mSpannableWriter.line();
         }
-
+        listHolder = new BulletListHolder(listHolder);
         visitChildren(bulletList);
         addParagraphIfNeeded(bulletList);
+        if (listHolder.getParent() != null) {
+            listHolder = listHolder.getParent();
+        } else {
+            listHolder = null;
+        }
     }
 
     @Override
@@ -184,36 +188,36 @@ public class CoreSpannableNodeRenderer extends AbstractVisitor implements NodeRe
 
     @Override
     public void visit(ListItem listItem) {
-        Class<?> span = null;
-        if (mOrderedList) {
-            span = OrderedListItemSpan.class;
-        } else if (mUnorderedList) {
-            span = UnorderedListItemSpan.class;
+        if (listHolder == null) {
+            return;
         }
 
-        mSpannableWriter.start(span);
+        mSpannableWriter.start(listHolder.getSpanClass());
         visitChildren(listItem);
-        mSpannableWriter.end(span);
+        mSpannableWriter.end(listHolder.getSpanClass(), listHolder.getSpanParameter());
 
         if (listItem.getNext() != null) {
             mSpannableWriter.line();
+        }
+
+        if (listHolder instanceof OrderedListHolder) {
+            ((OrderedListHolder) listHolder).increaseCounter();
         }
     }
 
     @Override
     public void visit(OrderedList orderedList) {
-        mOrderedList = true;
-        if (mUnorderedList) {
-            mUnorderedList = false;
+        if (listHolder != null) {
+            mSpannableWriter.line();
         }
-        if (mRendererContext.shouldKeepOrder()) {
-            mSpannableWriter.resetCountTo(orderedList.getStartNumber());
-        } else {
-            mSpannableWriter.resetCount();
-        }
-
+        listHolder = new OrderedListHolder(listHolder, orderedList, mRendererContext.shouldKeepOrder());
         visitChildren(orderedList);
         addParagraphIfNeeded(orderedList);
+        if (listHolder.getParent() != null) {
+            listHolder = listHolder.getParent();
+        } else {
+            listHolder = null;
+        }
     }
 
     @Override

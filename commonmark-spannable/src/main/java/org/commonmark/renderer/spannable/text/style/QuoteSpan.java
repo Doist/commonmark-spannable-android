@@ -5,13 +5,14 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.text.Layout;
 import android.text.TextPaint;
-import android.text.style.LeadingMarginSpan;
 import android.text.style.MetricAffectingSpan;
 
-public class QuoteSpan extends MetricAffectingSpan implements LeadingMarginSpan {
+public class QuoteSpan extends MetricAffectingSpan implements LeadingParagraphSpan {
     private final int mStripeColor;
     private final int mStripeSize;
     private final int mPadding;
+
+    private int mParentLeadingMargin;
 
     public QuoteSpan(int stripeColor, int stripeSize, int padding) {
         mStripeColor = stripeColor;
@@ -30,6 +31,11 @@ public class QuoteSpan extends MetricAffectingSpan implements LeadingMarginSpan 
     }
 
     @Override
+    public void increaseLeadingMargin(int leadingMargin) {
+        mParentLeadingMargin += leadingMargin;
+    }
+
+    @Override
     public int getLeadingMargin(boolean first) {
         return mStripeSize + mPadding;
     }
@@ -43,7 +49,7 @@ public class QuoteSpan extends MetricAffectingSpan implements LeadingMarginSpan 
         p.setStyle(Paint.Style.FILL);
         p.setColor(mStripeColor);
 
-        c.drawRect(x, top, x + dir * mStripeSize, bottom, p);
+        c.drawRect(mParentLeadingMargin, top, mParentLeadingMargin + dir * mStripeSize, bottom, p);
 
         p.setColor(color);
         p.setStyle(style);
