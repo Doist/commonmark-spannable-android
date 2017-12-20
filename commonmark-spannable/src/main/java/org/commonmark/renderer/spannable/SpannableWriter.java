@@ -45,7 +45,11 @@ public class SpannableWriter {
     }
 
     public void line() {
-        if (mLastChar != 0 && mLastChar != '\n') {
+        line(false);
+    }
+
+    public void line(boolean force) {
+        if (force || mLastChar != 0 && mLastChar != '\n') {
             mLastChar = '\n';
             mBuffer.append(mLastChar);
         }
@@ -72,6 +76,13 @@ public class SpannableWriter {
         if (isParagraphSpan(spanClass)) {
             int start = mParagraphStartQueue.pop();
             int end = mBuffer.length();
+
+            if (start == end) {
+                // Force new line.
+                line(true);
+                end++;
+            }
+
             // Create span.
             LeadingParagraphSpan span = (LeadingParagraphSpan) mProviderMap.get(spanClass).create(spanClass, parameter);
             // Update leading margin for all "sub items".
