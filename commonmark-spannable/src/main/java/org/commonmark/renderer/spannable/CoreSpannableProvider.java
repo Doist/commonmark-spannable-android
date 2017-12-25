@@ -73,6 +73,7 @@ class CoreSpannableProvider implements SpannableProvider {
 
         if (OrderedListItemSpan.class.equals(spanClass)) {
             return new OrderedListItemSpan(
+                    (int) parameter,
                     mProviderContext.getListItemLeading(),
                     mProviderContext.getListItemExtraHeight(),
                     mProviderContext.getListItemMarkerLeftMargin()
