@@ -10,13 +10,14 @@ import org.commonmark.renderer.spannable.internal.SpannableProviderMap;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
-import android.support.annotation.ColorInt;
-import android.support.annotation.ColorRes;
-import android.support.annotation.DimenRes;
 import android.text.SpannableStringBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
+import androidx.annotation.DimenRes;
 
 /**
  * Renders a tree of nodes to SpannableString.

@@ -2,7 +2,7 @@ package org.commonmark.renderer.spannable.internal;
 
 import org.commonmark.renderer.spannable.text.style.UnorderedListItemSpan;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 public class BulletListHolder extends ListHolder {
     public BulletListHolder(ListHolder parent) {

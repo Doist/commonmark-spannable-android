@@ -1,6 +1,6 @@
 package org.commonmark.renderer.spannable.internal;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 public abstract class ListHolder {
     private final ListHolder parent;

@@ -1,6 +1,6 @@
 package org.commonmark.renderer.spannable;
 
-import android.support.annotation.ColorInt;
+import androidx.annotation.ColorInt;
 
 public interface SpannableProviderContext {
     /**

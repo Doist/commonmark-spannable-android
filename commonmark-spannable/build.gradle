@@ -11,6 +11,6 @@ android {
 }
 
 dependencies {
-    implementation 'com.android.support:support-annotations:28.0.0'
+    implementation 'androidx.annotation:annotation:1.0.0'
     implementation 'com.atlassian.commonmark:commonmark:0.10.0'
 }

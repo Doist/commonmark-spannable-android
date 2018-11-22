@@ -3,7 +3,6 @@ package org.commonmark.renderer.spannable;
 import org.commonmark.renderer.spannable.internal.SpannableProviderMap;
 import org.commonmark.renderer.spannable.text.style.LeadingParagraphSpan;
 
-import android.support.annotation.Nullable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 
@@ -11,6 +10,8 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+
+import androidx.annotation.Nullable;
 
 @SuppressWarnings("WeakerAccess")
 public class SpannableWriter {

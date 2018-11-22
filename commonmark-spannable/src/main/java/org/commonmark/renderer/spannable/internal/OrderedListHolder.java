@@ -3,7 +3,7 @@ package org.commonmark.renderer.spannable.internal;
 import org.commonmark.node.OrderedList;
 import org.commonmark.renderer.spannable.text.style.OrderedListItemSpan;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 public class OrderedListHolder extends ListHolder {
     private int counter;

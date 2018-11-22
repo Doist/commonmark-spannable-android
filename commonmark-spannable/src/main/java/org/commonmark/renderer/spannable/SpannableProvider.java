@@ -1,8 +1,8 @@
 package org.commonmark.renderer.spannable;
 
-import android.support.annotation.Nullable;
-
 import java.util.Set;
+
+import androidx.annotation.Nullable;
 
 /**
  * Provider for a set of spans.
