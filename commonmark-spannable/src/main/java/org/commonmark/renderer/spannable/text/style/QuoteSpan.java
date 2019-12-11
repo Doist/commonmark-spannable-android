@@ -2,12 +2,9 @@ package org.commonmark.renderer.spannable.text.style;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Typeface;
 import android.text.Layout;
-import android.text.TextPaint;
-import android.text.style.MetricAffectingSpan;
 
-public class QuoteSpan extends MetricAffectingSpan implements LeadingParagraphSpan {
+public class QuoteSpan extends ItalicSpan implements LeadingParagraphSpan {
     private final int mStripeColor;
     private final int mStripeSize;
     private final int mPadding;
@@ -18,16 +15,6 @@ public class QuoteSpan extends MetricAffectingSpan implements LeadingParagraphSp
         mStripeColor = stripeColor;
         mStripeSize = stripeSize;
         mPadding = padding;
-    }
-
-    @Override
-    public void updateMeasureState(TextPaint paint) {
-        apply(paint);
-    }
-
-    @Override
-    public void updateDrawState(TextPaint paint) {
-        apply(paint);
     }
 
     @Override
@@ -53,9 +40,5 @@ public class QuoteSpan extends MetricAffectingSpan implements LeadingParagraphSp
 
         p.setColor(color);
         p.setStyle(style);
-    }
-
-    private void apply(TextPaint paint) {
-        paint.setTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.ITALIC));
     }
 }
