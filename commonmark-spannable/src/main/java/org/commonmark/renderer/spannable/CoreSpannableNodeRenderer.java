@@ -165,12 +165,6 @@ public class CoreSpannableNodeRenderer extends AbstractVisitor implements NodeRe
     }
 
     @Override
-    public void visit(HtmlBlock htmlBlock) {
-        visitChildren(htmlBlock);
-        mSpannableWriter.line();
-    }
-
-    @Override
     public void visit(IndentedCodeBlock indentedCodeBlock) {
         mSpannableWriter.start(CodeBlockSpan.class);
         mSpannableWriter.write(indentedCodeBlock.getLiteral());
@@ -239,6 +233,16 @@ public class CoreSpannableNodeRenderer extends AbstractVisitor implements NodeRe
         mSpannableWriter.start(BoldSpan.class);
         visitChildren(strongEmphasis);
         mSpannableWriter.end(BoldSpan.class);
+    }
+
+    @Override
+    public void visit(HtmlBlock htmlBlock) {
+        mSpannableWriter.write(htmlBlock.getLiteral());
+    }
+
+    @Override
+    public void visit(HtmlInline htmlInline) {
+        mSpannableWriter.write(htmlInline.getLiteral());
     }
 
     @Override
