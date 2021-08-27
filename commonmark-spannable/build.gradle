@@ -1,16 +1,15 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion "28.0.3"
+    compileSdkVersion 30
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 28
+        targetSdkVersion 30
     }
 }
 
 dependencies {
-    implementation 'androidx.annotation:annotation:1.0.0'
-    implementation 'com.atlassian.commonmark:commonmark:0.12.1'
+    implementation 'androidx.annotation:annotation:1.2.0'
+    implementation 'org.commonmark:commonmark:0.18.0'
 }
