@@ -1,9 +1,11 @@
 package org.commonmark.renderer.spannable;
 
+import org.commonmark.ext.gfm.strikethrough.Strikethrough;
 import org.commonmark.node.AbstractVisitor;
 import org.commonmark.node.BlockQuote;
 import org.commonmark.node.BulletList;
 import org.commonmark.node.Code;
+import org.commonmark.node.CustomNode;
 import org.commonmark.node.Document;
 import org.commonmark.node.Emphasis;
 import org.commonmark.node.FencedCodeBlock;
@@ -37,6 +39,7 @@ import org.commonmark.renderer.spannable.text.style.LinkSpan;
 import org.commonmark.renderer.spannable.text.style.QuoteSpan;
 
 import android.text.TextUtils;
+import android.text.style.StrikethroughSpan;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -78,7 +81,8 @@ public class CoreSpannableNodeRenderer extends AbstractVisitor implements NodeRe
                 Code.class,
                 HtmlInline.class,
                 SoftLineBreak.class,
-                HardLineBreak.class)
+                HardLineBreak.class,
+                Strikethrough.class)
         );
     }
 
@@ -147,6 +151,17 @@ public class CoreSpannableNodeRenderer extends AbstractVisitor implements NodeRe
     public void visit(HardLineBreak hardLineBreak) {
         mSpannableWriter.line();
         visitChildren(hardLineBreak);
+    }
+
+    @Override
+    public void visit(CustomNode customNode) {
+        if (customNode instanceof Strikethrough) {
+            mSpannableWriter.start(StrikethroughSpan.class);
+            visitChildren(customNode);
+            mSpannableWriter.end(StrikethroughSpan.class);
+        } else {
+            visitChildren(customNode);
+        }
     }
 
     @Override
