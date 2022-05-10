@@ -11,6 +11,8 @@ import org.commonmark.renderer.spannable.text.style.OrderedListItemSpan;
 import org.commonmark.renderer.spannable.text.style.QuoteSpan;
 import org.commonmark.renderer.spannable.text.style.UnorderedListItemSpan;
 
+import android.text.style.StrikethroughSpan;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -37,6 +39,7 @@ class CoreSpannableProvider implements SpannableProvider {
                 LinkSpan.class,
                 OrderedListItemSpan.class,
                 QuoteSpan.class,
+                StrikethroughSpan.class,
                 UnorderedListItemSpan.class)
         );
     }
@@ -95,6 +98,10 @@ class CoreSpannableProvider implements SpannableProvider {
                     mProviderContext.getQuoteStripeWidth(),
                     mProviderContext.getQuotePadding()
             );
+        }
+
+        if (StrikethroughSpan.class.equals(spanClass)) {
+            return new StrikethroughSpan();
         }
 
         throw new IllegalArgumentException("unknown spannable: " + spanClass.toString());
