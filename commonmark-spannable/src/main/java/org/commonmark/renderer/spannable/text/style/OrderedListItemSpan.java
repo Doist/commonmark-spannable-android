@@ -6,9 +6,9 @@ import android.graphics.Paint;
 public class OrderedListItemSpan extends ListItemSpan {
     private final int mMarkerNumber;
 
-    public OrderedListItemSpan(int order, int leading, int extraHeight, int leftMargin) {
-        super(leading, extraHeight, leftMargin);
-        mMarkerNumber = order;
+    public OrderedListItemSpan(OrderedListItemData data, int leading, int extraHeight, int leftMargin) {
+        super((int) (data.mLeadingMultiplier * leading), extraHeight, leftMargin);
+        mMarkerNumber = data.mMarkerNumber;
     }
 
     @Override
@@ -17,5 +17,15 @@ public class OrderedListItemSpan extends ListItemSpan {
         String text = mMarkerNumber + ". ";
         float textSize = p.measureText(text);
         c.drawText(text, x + (lineLeading - textSize) / 2, baseline, p);
+    }
+
+    public static class OrderedListItemData {
+        final float mLeadingMultiplier;
+        final int mMarkerNumber;
+
+        public OrderedListItemData(float leadingMultiplier, int markerNumber) {
+            mLeadingMultiplier = leadingMultiplier;
+            mMarkerNumber = markerNumber;
+        }
     }
 }
