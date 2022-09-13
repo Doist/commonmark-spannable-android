@@ -166,7 +166,7 @@ public class CoreSpannableNodeRenderer extends AbstractVisitor implements NodeRe
 
     @Override
     public void visit(Heading header) {
-        mSpannableWriter.start(HeaderSpan.class);
+        mSpannableWriter.start(HeaderSpan.class, header.getLevel());
         visitChildren(header);
         mSpannableWriter.end(HeaderSpan.class);
 
