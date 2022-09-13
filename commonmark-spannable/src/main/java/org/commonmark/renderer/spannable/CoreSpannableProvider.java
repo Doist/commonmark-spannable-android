@@ -59,7 +59,32 @@ class CoreSpannableProvider implements SpannableProvider {
         }
 
         if (HeaderSpan.class.equals(spanClass)) {
-            return new HeaderSpan(mProviderContext.getHeaderTextSize());
+            switch ((int) parameter) {
+                case 1:
+                    return new HeaderSpan(
+                            mProviderContext.getHeader1TextSize(),
+                            mProviderContext.getHeader1Typeface());
+                case 2:
+                    return new HeaderSpan(
+                            mProviderContext.getHeader2TextSize(),
+                            mProviderContext.getHeader2Typeface());
+                case 3:
+                    return new HeaderSpan(
+                            mProviderContext.getHeader3TextSize(),
+                            mProviderContext.getHeader3Typeface());
+                case 4:
+                    return new HeaderSpan(
+                            mProviderContext.getHeader4TextSize(),
+                            mProviderContext.getHeader4Typeface());
+                case 5:
+                    return new HeaderSpan(
+                            mProviderContext.getHeader5TextSize(),
+                            mProviderContext.getHeader5Typeface());
+                case 6:
+                    return new HeaderSpan(
+                            mProviderContext.getHeader6TextSize(),
+                            mProviderContext.getHeader6Typeface());
+            }
         }
 
         if (InlineCodeSpan.class.equals(spanClass)) {

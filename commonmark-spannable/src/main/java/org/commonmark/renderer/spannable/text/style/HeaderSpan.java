@@ -5,10 +5,12 @@ import android.text.TextPaint;
 import android.text.style.MetricAffectingSpan;
 
 public class HeaderSpan extends MetricAffectingSpan {
-    private final int mTextSize;
+    private final float mTextSize;
+    private final Typeface mTypeface;
 
-    public HeaderSpan(int textSize) {
+    public HeaderSpan(float textSize, Typeface typeface) {
         mTextSize = textSize;
+        mTypeface = typeface;
     }
 
     @Override
@@ -23,6 +25,6 @@ public class HeaderSpan extends MetricAffectingSpan {
 
     private void apply(TextPaint tp) {
         tp.setTextSize(mTextSize);
-        tp.setTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD));
+        tp.setTypeface(mTypeface);
     }
 }
