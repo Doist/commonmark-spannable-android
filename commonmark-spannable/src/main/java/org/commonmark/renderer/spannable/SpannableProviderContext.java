@@ -1,5 +1,7 @@
 package org.commonmark.renderer.spannable;
 
+import android.graphics.Typeface;
+
 import androidx.annotation.ColorInt;
 
 public interface SpannableProviderContext {
@@ -24,9 +26,64 @@ public interface SpannableProviderContext {
     int getListItemBulletRadius();
 
     /**
-     * @return header text size in px
+     * @return header1 text size in px
      */
-    int getHeaderTextSize();
+    float getHeader1TextSize();
+
+    /**
+     * @return header1 typeface
+     */
+    Typeface getHeader1Typeface();
+
+    /**
+     * @return header2 text size in px
+     */
+    float getHeader2TextSize();
+
+    /**
+     * @return header2 typeface
+     */
+    Typeface getHeader2Typeface();
+
+    /**
+     * @return header3 text size in px
+     */
+    float getHeader3TextSize();
+
+    /**
+     * @return header3 typeface
+     */
+    Typeface getHeader3Typeface();
+
+    /**
+     * @return header4 text size in px
+     */
+    float getHeader4TextSize();
+
+    /**
+     * @return header4 typeface
+     */
+    Typeface getHeader4Typeface();
+
+    /**
+     * @return header5 text size in px
+     */
+    float getHeader5TextSize();
+
+    /**
+     * @return header5 typeface
+     */
+    Typeface getHeader5Typeface();
+
+    /**
+     * @return header6 text size in px
+     */
+    float getHeader6TextSize();
+
+    /**
+     * @return header6 typeface
+     */
+    Typeface getHeader6Typeface();
 
     /**
      * @return code text size in px

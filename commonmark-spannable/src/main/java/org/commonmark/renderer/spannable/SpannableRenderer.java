@@ -9,6 +9,7 @@ import org.commonmark.renderer.spannable.internal.SpannableProviderMap;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.text.SpannableStringBuilder;
 
@@ -31,7 +32,18 @@ public class SpannableRenderer implements Renderer {
     private final int mListItemExtraHeight;
     private final int mListItemLeading;
     private final int mListItemBulletRadius;
-    private final int mHeaderTextSize;
+    private final float mHeader1TextSize;
+    private final Typeface mHeader1Typeface;
+    private final float mHeader2TextSize;
+    private final Typeface mHeader2Typeface;
+    private final float mHeader3TextSize;
+    private final Typeface mHeader3Typeface;
+    private final float mHeader4TextSize;
+    private final Typeface mHeader4Typeface;
+    private final float mHeader5TextSize;
+    private final Typeface mHeader5Typeface;
+    private final float mHeader6TextSize;
+    private final Typeface mHeader6Typeface;
     private final int mCodeTextSize;
     private final int mCodeBlockPadding;
     private final int mParagraphPadding;
@@ -58,8 +70,53 @@ public class SpannableRenderer implements Renderer {
         mListItemBulletRadius = getDimen(resources, builder.mListItemBulletRadius, builder.mListItemBulletRadiusResId,
                                          R.dimen.commonmark_list_item_bullet_radius);
 
-        mHeaderTextSize = getDimen(resources, builder.mHeaderTextSize, builder.mHeaderTextSizeResId,
-                                   R.dimen.commonmark_header_text_size);
+        mHeader1TextSize = getDimenFloat(
+                resources,
+                builder.mHeader1TextSize,
+                builder.mHeader1TextSizeResId,
+                R.dimen.commonmark_header_text_size);
+
+        mHeader1Typeface = getTypeface(builder.mHeader1Typeface, Typeface.DEFAULT_BOLD);
+
+        mHeader2TextSize = getDimenFloat(
+                resources,
+                builder.mHeader2TextSize,
+                builder.mHeader2TextSizeResId,
+                R.dimen.commonmark_header_text_size);
+
+        mHeader2Typeface = getTypeface(builder.mHeader2Typeface, Typeface.DEFAULT_BOLD);
+
+        mHeader3TextSize = getDimenFloat(
+                resources,
+                builder.mHeader3TextSize,
+                builder.mHeader3TextSizeResId,
+                R.dimen.commonmark_header_text_size);
+
+        mHeader3Typeface = getTypeface(builder.mHeader3Typeface, Typeface.DEFAULT_BOLD);
+
+        mHeader4TextSize = getDimenFloat(
+                resources,
+                builder.mHeader4TextSize,
+                builder.mHeader4TextSizeResId,
+                R.dimen.commonmark_header_text_size);
+
+        mHeader4Typeface = getTypeface(builder.mHeader4Typeface, Typeface.DEFAULT_BOLD);
+
+        mHeader5TextSize = getDimenFloat(
+                resources,
+                builder.mHeader5TextSize,
+                builder.mHeader5TextSizeResId,
+                R.dimen.commonmark_header_text_size);
+
+        mHeader5Typeface = getTypeface(builder.mHeader5Typeface, Typeface.DEFAULT_BOLD);
+
+        mHeader6TextSize = getDimenFloat(
+                resources,
+                builder.mHeader6TextSize,
+                builder.mHeader6TextSizeResId,
+                R.dimen.commonmark_header_text_size);
+
+        mHeader6Typeface = getTypeface(builder.mHeader6Typeface, Typeface.DEFAULT_BOLD);
 
         mCodeTextSize = getDimen(resources, builder.mCodeTextSize, builder.mCodeTextSizeResId,
                                  R.dimen.commonmark_code_text_size);
@@ -137,6 +194,24 @@ public class SpannableRenderer implements Renderer {
         }
     }
 
+    private float getDimenFloat(Resources res, Float value, Integer resId, int defaultResId) {
+        if (value != null) {
+            return value;
+        } else if (resId != null) {
+            return res.getDimensionPixelSize(resId);
+        } else {
+            return res.getDimensionPixelSize(defaultResId);
+        }
+    }
+
+    private Typeface getTypeface(Typeface value, Typeface defaultTypeface) {
+        if (value != null) {
+            return value;
+        }  else {
+            return defaultTypeface;
+        }
+    }
+
     private int getColor(Resources res, Integer value, Integer resId, int defaultResId) {
         if (value != null) {
             return value;
@@ -183,8 +258,24 @@ public class SpannableRenderer implements Renderer {
         private Integer mListItemLeadingResId;
         private Integer mListItemBulletRadius;
         private Integer mListItemBulletRadiusResId;
-        private Integer mHeaderTextSize;
-        private Integer mHeaderTextSizeResId;
+        private Float mHeader1TextSize;
+        private Integer mHeader1TextSizeResId;
+        private Typeface mHeader1Typeface;
+        private Float mHeader2TextSize;
+        private Integer mHeader2TextSizeResId;
+        private Typeface mHeader2Typeface;
+        private Float mHeader3TextSize;
+        private Integer mHeader3TextSizeResId;
+        private Typeface mHeader3Typeface;
+        private Float mHeader4TextSize;
+        private Integer mHeader4TextSizeResId;
+        private Typeface mHeader4Typeface;
+        private Float mHeader5TextSize;
+        private Integer mHeader5TextSizeResId;
+        private Typeface mHeader5Typeface;
+        private Float mHeader6TextSize;
+        private Integer mHeader6TextSizeResId;
+        private Typeface mHeader6Typeface;
         private Integer mCodeTextSize;
         private Integer mCodeTextSizeResId;
         private Integer mCodeBlockPadding;
@@ -312,24 +403,200 @@ public class SpannableRenderer implements Renderer {
         }
 
         /**
-         * This param defines text size for header.
+         * This param defines text size for header1.
          *
          * @param textSize header text size in px
          * @return {@code this}
          */
-        public Builder headerTextSize(int textSize) {
-            mHeaderTextSize = textSize;
+        public Builder header1TextSize(float textSize) {
+            mHeader1TextSize = textSize;
             return this;
         }
 
         /**
-         * This param defines text size for header.
+         * This param defines text size for header1.
          *
          * @param resId header text size resources id
          * @return {@code this}
          */
-        public Builder headerTextSizeResId(@DimenRes int resId) {
-            mHeaderTextSizeResId = resId;
+        public Builder header1TextSizeResId(@DimenRes int resId) {
+            mHeader1TextSizeResId = resId;
+            return this;
+        }
+
+        /**
+         * This param defines typeface for header1.
+         *
+         * @param typeface header typeface
+         * @return {@code this}
+         */
+        public Builder header1Typeface(Typeface typeface) {
+            mHeader1Typeface = typeface;
+            return this;
+        }
+
+        /**
+         * This param defines text size for header2.
+         *
+         * @param textSize header text size in px
+         * @return {@code this}
+         */
+        public Builder header2TextSize(float textSize) {
+            mHeader2TextSize = textSize;
+            return this;
+        }
+
+        /**
+         * This param defines text size for header2.
+         *
+         * @param resId header text size resources id
+         * @return {@code this}
+         */
+        public Builder header2TextSizeResId(@DimenRes int resId) {
+            mHeader2TextSizeResId = resId;
+            return this;
+        }
+
+        /**
+         * This param defines typeface for header2.
+         *
+         * @param typeface header typeface
+         * @return {@code this}
+         */
+        public Builder header2Typeface(Typeface typeface) {
+            mHeader2Typeface = typeface;
+            return this;
+        }
+
+        /**
+         * This param defines text size for header3.
+         *
+         * @param textSize header text size in px
+         * @return {@code this}
+         */
+        public Builder header3TextSize(float textSize) {
+            mHeader3TextSize = textSize;
+            return this;
+        }
+
+        /**
+         * This param defines text size for header3.
+         *
+         * @param resId header text size resources id
+         * @return {@code this}
+         */
+        public Builder header3TextSizeResId(@DimenRes int resId) {
+            mHeader3TextSizeResId = resId;
+            return this;
+        }
+
+        /**
+         * This param defines typeface for header3.
+         *
+         * @param typeface header typeface
+         * @return {@code this}
+         */
+        public Builder header3Typeface(Typeface typeface) {
+            mHeader3Typeface = typeface;
+            return this;
+        }
+
+        /**
+         * This param defines text size for header4.
+         *
+         * @param textSize header text size in px
+         * @return {@code this}
+         */
+        public Builder header4TextSize(float textSize) {
+            mHeader4TextSize = textSize;
+            return this;
+        }
+
+        /**
+         * This param defines text size for header4.
+         *
+         * @param resId header text size resources id
+         * @return {@code this}
+         */
+        public Builder header4TextSizeResId(@DimenRes int resId) {
+            mHeader4TextSizeResId = resId;
+            return this;
+        }
+
+        /**
+         * This param defines typeface for header4.
+         *
+         * @param typeface header typeface
+         * @return {@code this}
+         */
+        public Builder header4Typeface(Typeface typeface) {
+            mHeader4Typeface = typeface;
+            return this;
+        }
+
+        /**
+         * This param defines text size for header5.
+         *
+         * @param textSize header text size in px
+         * @return {@code this}
+         */
+        public Builder header5TextSize(float textSize) {
+            mHeader5TextSize = textSize;
+            return this;
+        }
+
+        /**
+         * This param defines text size for header5.
+         *
+         * @param resId header text size resources id
+         * @return {@code this}
+         */
+        public Builder header5TextSizeResId(@DimenRes int resId) {
+            mHeader5TextSizeResId = resId;
+            return this;
+        }
+
+        /**
+         * This param defines typeface for header5.
+         *
+         * @param typeface header typeface
+         * @return {@code this}
+         */
+        public Builder header5Typeface(Typeface typeface) {
+            mHeader5Typeface = typeface;
+            return this;
+        }
+
+        /**
+         * This param defines text size for header6.
+         *
+         * @param textSize header text size in px
+         * @return {@code this}
+         */
+        public Builder header6TextSize(float textSize) {
+            mHeader6TextSize = textSize;
+            return this;
+        }
+
+        /**
+         * This param defines text size for header6.
+         *
+         * @param resId header text size resources id
+         * @return {@code this}
+         */
+        public Builder header6TextSizeResId(@DimenRes int resId) {
+            mHeader6TextSizeResId = resId;
+            return this;
+        }
+
+        /**
+         * This param defines typeface for header6.
+         *
+         * @param typeface header typeface
+         * @return {@code this}
+         */
+        public Builder header6Typeface(Typeface typeface) {
+            mHeader6Typeface = typeface;
             return this;
         }
 
@@ -587,8 +854,63 @@ public class SpannableRenderer implements Renderer {
         }
 
         @Override
-        public int getHeaderTextSize() {
-            return mHeaderTextSize;
+        public float getHeader1TextSize() {
+            return mHeader1TextSize;
+        }
+
+        @Override
+        public Typeface getHeader1Typeface() {
+            return mHeader1Typeface;
+        }
+
+        @Override
+        public float getHeader2TextSize() {
+            return mHeader2TextSize;
+        }
+
+        @Override
+        public Typeface getHeader2Typeface() {
+            return mHeader2Typeface;
+        }
+
+        @Override
+        public float getHeader3TextSize() {
+            return mHeader3TextSize;
+        }
+
+        @Override
+        public Typeface getHeader3Typeface() {
+            return mHeader3Typeface;
+        }
+
+        @Override
+        public float getHeader4TextSize() {
+            return mHeader4TextSize;
+        }
+
+        @Override
+        public Typeface getHeader4Typeface() {
+            return mHeader4Typeface;
+        }
+
+        @Override
+        public float getHeader5TextSize() {
+            return mHeader5TextSize;
+        }
+
+        @Override
+        public Typeface getHeader5Typeface() {
+            return mHeader5Typeface;
+        }
+
+        @Override
+        public float getHeader6TextSize() {
+            return mHeader6TextSize;
+        }
+
+        @Override
+        public Typeface getHeader6Typeface() {
+            return mHeader6Typeface;
         }
 
         @Override
