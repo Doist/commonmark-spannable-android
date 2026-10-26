@@ -13,9 +13,6 @@ public abstract class ListItemSpan implements LeadingParagraphSpan, LineHeightSp
 
     private int mParentLeadingMargin;
 
-    private int mTextDefaultTop;
-    private int mTextDefaultAscent;
-
     ListItemSpan(int leading, int extraHeight, int leftMargin) {
         mLineLeading = leading;
         mLineExtraSpace = extraHeight;
@@ -48,13 +45,8 @@ public abstract class ListItemSpan implements LeadingParagraphSpan, LineHeightSp
     @Override
     public void chooseHeight(CharSequence text, int start, int end, int spanstartv, int v, Paint.FontMetricsInt fm) {
         if (spanstartv == v) {
-            mTextDefaultTop = fm.top;
-            mTextDefaultAscent = fm.ascent;
             fm.top -= mLineExtraSpace;
             fm.ascent -= mLineExtraSpace;
-        } else {
-            fm.top = mTextDefaultTop;
-            fm.ascent = mTextDefaultAscent;
         }
     }
 }
